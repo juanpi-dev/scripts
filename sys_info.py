@@ -1,3 +1,7 @@
+# Get basic system info from a running Linux machine in JSON format
+# It's based on the code published in PYTHON CHRONICLE:
+# https://www.pythoncircle.com/post/535/python-script-9-getting-system-information-in-linux-using-python-script/
+
 import platform
 import json
 import sys
@@ -19,11 +23,12 @@ platform_object = {
     'system': '',
 }
 
-proc_info = {}
-
-if '--all' in sys.argv or '-a' in sys.argv:
-    print_all = True
+if '--help' in sys.argv or '-h' in sys.argv:
     print_default = False
+    print('Here goes a kind of doc')
+    exit()
+elif '--all' in sys.argv or '-a' in sys.argv:
+    print_all = True
     proc_info = {
         'platform': platform_object,
         'processors': {},
@@ -32,6 +37,7 @@ if '--all' in sys.argv or '-a' in sys.argv:
         'uptime': 0,
     }
 else:
+    proc_info = {}
     if '--cpu' in sys.argv or '-c' in sys.argv:
         print_cpu = True
         print_default = False
