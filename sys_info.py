@@ -4,7 +4,19 @@
 
 import platform
 import json
-import sys
+import argparse
+
+parser = argparse.ArgumentParser()
+# parser.add_argument('-h', '--help', action='store_true')
+# parser.add_argument('-v', '--verbose', dest='verbose', action='store_true')
+parser.add_argument('-a', '--all', action='store_true')
+parser.add_argument('-c', '--cpu', action='store_true')
+parser.add_argument('-m', '--memory', action='store_true')
+parser.add_argument('-s', '--platform', action='store_true')
+parser.add_argument('-l', '--load', action='store_true')
+parser.add_argument('-u', '--uptime', action='store_true')
+parser.add_argument('-p', '--prettyprint', action='store_true')
+args = parser.parse_args()
 
 print_default = True
 print_cpu = False
@@ -23,12 +35,9 @@ platform_object = {
     'system': '',
 }
 
-if '--help' in sys.argv or '-h' in sys.argv:
-    print_default = False
-    print('Here goes a kind of doc')
-    exit()
-elif '--all' in sys.argv or '-a' in sys.argv:
+if args.all:
     print_all = True
+    print_default = False
     proc_info = {
         'platform': platform_object,
         'processors': {},
@@ -38,27 +47,27 @@ elif '--all' in sys.argv or '-a' in sys.argv:
     }
 else:
     proc_info = {}
-    if '--cpu' in sys.argv or '-c' in sys.argv:
+    if args.cpu:
         print_cpu = True
         print_default = False
         proc_info['processors'] = {}
 
-    if '--memory' in sys.argv or '-m' in sys.argv:
+    if args.memory:
         print_memory = True
         print_default = False
         proc_info['memory'] = {}
 
-    if '--platform' in sys.argv or '-s' in sys.argv:
+    if args.platform:
         print_platform = True
         print_default = False
         proc_info['platform'] = platform_object
 
-    if '--load' in sys.argv or '-l' in sys.argv:
+    if args.load:
         print_load = True
         print_default = False
         proc_info['loadavg'] = []
 
-    if '--uptime' in sys.argv or '-u' in sys.argv:
+    if args.uptime:
         print_uptime = True
         print_default = False
         proc_info['uptime'] = 0
@@ -73,7 +82,7 @@ if print_default:
     }
 
 indent = None
-if '--prettyprint' in sys.argv or '-p' in sys.argv:
+if args.prettyprint:
     indent = 2
 
 # processor
@@ -83,7 +92,7 @@ if print_all or print_cpu:
 
     cpuinfo = [x.strip().split(":")[1] for x in info if "model name" in x]
     for index, item in enumerate(cpuinfo):
-        proc_info['processors'][int(index)] = item.strip()
+        proc_info['processors'][index] = item.strip()
 
 
 # node, architecture, machine, system, distribution
