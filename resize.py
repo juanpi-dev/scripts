@@ -1,0 +1,79 @@
+# Resize all JPEG, GIF, PNG and BMP images inside a directory,
+# recreating all directory tree into another path
+
+import os
+import imghdr
+from PIL import Image
+from pathlib import Path
+
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-v', '--verbose', action='store_true')
+parser.add_argument('-i', '--input')
+parser.add_argument('-o', '--output')
+parser.add_argument('-s', '--side')
+args = parser.parse_args()
+
+filetypes = ('jpeg', 'png', 'bmp', 'gif')
+
+if float(args.side) > 0 and args.input.__len__() and args.output.__len__():
+    input_dir = str(args.input.rstrip('/'))
+    output_dir = str(args.output.rstrip('/'))
+    img_size_max = float(args.side)
+
+    if args.verbose:
+        print('Checking if output directory exists')
+    if not os.path.exists(output_dir):
+        if args.verbose:
+            print('Creating directory: ' + input_dir)
+        os.makedirs(output_dir)
+
+    if os.path.exists(input_dir):
+        pathlist = Path(input_dir).glob('**/*.*')
+        count = {}
+        for path in pathlist:
+            filetype = imghdr.what(str(path))
+
+            if args.verbose:
+                print('Checking file type')
+            if filetype in filetypes:
+                path_in_str = str(path)
+                filename = str(path.name)
+
+                # I need to know the intermediate folders in order to create them before saving
+                relative_path = path_in_str[input_dir.__len__() + 1: -filename.__len__()]
+                absolute_output_path = str(Path(output_dir).joinpath(relative_path))
+
+                img = Image.open(path_in_str)
+                if args.verbose:
+                    print('Calculating dimensions')
+                img_size_x, img_size_y = img.size
+                if img_size_x >= img_size_y:
+                    h = int(img_size_max)
+                    v = int(img_size_max * float(img_size_y) / float(img_size_x))
+                else:
+                    v = int(img_size_max)
+                    h = int(img_size_max * float(img_size_x) / float(img_size_y))
+
+                if args.verbose:
+                    print('Resizing image')
+                img = img.resize((int(h), int(v)), Image.ANTIALIAS)
+
+                if not os.path.exists(absolute_output_path):
+                    os.makedirs(absolute_output_path)
+                img.save(str(Path(absolute_output_path).joinpath(filename)))
+
+                if filetype in count:
+                    count[filetype] = count[filetype] + 1
+                else:
+                    count[filetype] = 1
+
+                if args.verbose:
+                    print('Resized and saved (' + filetype + ') ' + filename + '')
+        for item in count:
+            print('Resized ' + str(count[item]) + ' ' + str(item) + ' images')
+    else:
+        print('Invalid input directory, it cannot be opened')
+else:
+    print('Invalid arguments, side must be an positive number')
