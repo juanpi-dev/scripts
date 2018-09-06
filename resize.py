@@ -32,45 +32,50 @@ if float(args.side) > 0 and args.input.__len__() and args.output.__len__():
     if os.path.exists(input_dir):
         pathlist = Path(input_dir).glob('**/*.*')
         count = {}
-        for path in pathlist:
-            filetype = imghdr.what(str(path))
-
-            if args.verbose:
-                print('Checking file type')
-            if filetype in filetypes:
-                path_in_str = str(path)
-                filename = str(path.name)
-
-                # I need to know the intermediate folders in order to create them before saving
-                relative_path = path_in_str[input_dir.__len__() + 1: -filename.__len__()]
-                absolute_output_path = str(Path(output_dir).joinpath(relative_path))
-
-                img = Image.open(path_in_str)
-                if args.verbose:
-                    print('Calculating dimensions')
-                img_size_x, img_size_y = img.size
-                if img_size_x >= img_size_y:
-                    h = int(img_size_max)
-                    v = int(img_size_max * float(img_size_y) / float(img_size_x))
-                else:
-                    v = int(img_size_max)
-                    h = int(img_size_max * float(img_size_x) / float(img_size_y))
+        try:
+            for index, path in enumerate(pathlist):
+                filetype = imghdr.what(str(path))
 
                 if args.verbose:
-                    print('Resizing image')
-                img = img.resize((int(h), int(v)), Image.ANTIALIAS)
+                    print('Checking file type ' + filetype)
+                if filetype in filetypes:
+                    path_in_str = str(path)
+                    filename = str(path.name)
 
-                if not os.path.exists(absolute_output_path):
-                    os.makedirs(absolute_output_path)
-                img.save(str(Path(absolute_output_path).joinpath(filename)))
+                    # I need to know the intermediate folders in order to create them before saving
+                    relative_path = path_in_str[input_dir.__len__() + 1: -filename.__len__()]
+                    absolute_output_path = str(Path(output_dir).joinpath(relative_path))
 
-                if filetype in count:
-                    count[filetype] = count[filetype] + 1
-                else:
-                    count[filetype] = 1
+                    img = Image.open(path_in_str)
+                    img_size_x, img_size_y = img.size
+                    if args.verbose:
+                        print('Calculating new dimensions, original: [' + str(img_size_x) + 'x' + str(img_size_y) + ']')
+                    if img_size_x >= img_size_y:
+                        h = int(img_size_max)
+                        v = int(img_size_max * float(img_size_y) / float(img_size_x))
+                    else:
+                        v = int(img_size_max)
+                        h = int(img_size_max * float(img_size_x) / float(img_size_y))
 
-                if args.verbose:
-                    print('Resized and saved (' + filetype + ') ' + filename + '')
+                    if args.verbose:
+                        print('Resizing image ' + str(index + 1) + ' [' + str(h) + 'x' + str(v) + ']')
+                    img = img.resize((int(h), int(v)), Image.ANTIALIAS)
+
+                    if not os.path.exists(absolute_output_path):
+                        os.makedirs(absolute_output_path)
+                    img.save(str(Path(absolute_output_path).joinpath(filename)))
+
+                    if filetype in count:
+                        count[filetype] = count[filetype] + 1
+                    else:
+                        count[filetype] = 1
+
+                    if args.verbose:
+                        print('Saved ' + filename)
+        except KeyboardInterrupt:
+            print('\n\nOh, no, a KeyboardInterrupt :(\nLet\'s see how was going on...')
+            pass
+
         for item in count:
             print('Resized ' + str(count[item]) + ' ' + str(item) + ' images')
     else:
