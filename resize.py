@@ -32,6 +32,7 @@ if float(args.side) > 0 and args.input.__len__() and args.output.__len__():
     if os.path.exists(input_dir):
         pathlist = Path(input_dir).glob('**/*.*')
         count = {}
+        total = 0
         try:
             for index, path in enumerate(pathlist):
                 filetype = imghdr.what(str(path))
@@ -70,6 +71,8 @@ if float(args.side) > 0 and args.input.__len__() and args.output.__len__():
                     else:
                         count[filetype] = 1
 
+                    total = index + 1
+
                     if args.verbose:
                         print('Saved ' + filename)
         except KeyboardInterrupt:
@@ -78,6 +81,7 @@ if float(args.side) > 0 and args.input.__len__() and args.output.__len__():
 
         for item in count:
             print('Resized ' + str(count[item]) + ' ' + str(item) + ' images')
+        print('Total: ' + str(total) + ' images')
     else:
         print('Invalid input directory, it cannot be opened')
 else:
