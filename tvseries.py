@@ -40,46 +40,47 @@ if args.input is not None and args.output is not None:
                     #     print('Checking file extension ' + extension)
                     if extension.lower() in extensions:
                         filename = os.path.basename(str(path))
-                        if args.verbose:
-                            print('Processing ' + filename)
-
-
                         m = re.search('(.+).*s([0-9]+)e([0-9])+.*', filename)
-                        final_filename = re.sub(
-                            r'[^\x20\x30-\x39\x41-\x5A\x61-\x7A]+', ' ', str(m.group(1))
-                        ).strip().lower()
-                        # print('Title: ' + final_filename
-                        #       + ', season: ' + str(m.group(2))
-                        #       + ', episode: ' + str(m.group(3)))
 
-                        season_number = str(m.group(2))
-                        target_dir = os.path.join(str(output_dir), final_filename)
-                        target_dir = os.path.join(str(target_dir), 'season ' + season_number)
-
-                        if not os.path.exists(target_dir):
+                        if m is not None:
                             if args.verbose:
-                                print('Creating directory: ' + target_dir)
-                            os.makedirs(target_dir)
-                        else:
+                                print('Processing ' + filename)
+
+                            final_filename = re.sub(
+                                r'[^\x20\x30-\x39\x41-\x5A\x61-\x7A]+', ' ', str(m.group(1))
+                            ).strip().lower()
+                            # print('Title: ' + final_filename
+                            #       + ', season: ' + str(m.group(2))
+                            #       + ', episode: ' + str(m.group(3)))
+
+                            season_number = str(m.group(2))
+                            target_dir = os.path.join(str(output_dir), final_filename)
+                            target_dir = os.path.join(str(target_dir), 'season ' + season_number)
+
+                            if not os.path.exists(target_dir):
+                                if args.verbose:
+                                    print('Creating directory: ' + target_dir)
+                                os.makedirs(target_dir)
+                            else:
+                                if args.verbose:
+                                    print('It\'s ok, directory "' + target_dir + '" already exists')
+
                             if args.verbose:
-                                print('It\'s ok, directory "' + target_dir + '" already exists')
+                                print('Moving ' + filename)
+                            shutil.move(str(path), str(target_dir))
 
-                        if args.verbose:
-                            print('Moving ' + filename)
-                        shutil.move(str(path), str(target_dir))
+                            total = total + 1
+                            # path_in_str = str(path)
+                            # filename = str(path.name)
+                            #
+                            # # I need to know the intermediate folders in order to create them before saving
+                            # relative_path = path_in_str[input_dir.__len__() + 1: -filename.__len__()]
+                            # absolute_output_path = str(Path(output_dir).joinpath(relative_path))
+                            #
 
-                        total = total + 1
-                        # path_in_str = str(path)
-                        # filename = str(path.name)
                         #
-                        # # I need to know the intermediate folders in order to create them before saving
-                        # relative_path = path_in_str[input_dir.__len__() + 1: -filename.__len__()]
-                        # absolute_output_path = str(Path(output_dir).joinpath(relative_path))
-                        #
-
-                    #
-                    #     if args.verbose:
-                    #         print('Saved ' + filename)
+                        #     if args.verbose:
+                        #         print('Saved ' + filename)
             except KeyboardInterrupt:
                 print('\n\nOh, no, a KeyboardInterrupt :(\nLet\'s see how was going on...')
                 pass
