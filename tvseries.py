@@ -53,7 +53,7 @@ if args.input is not None and args.output is not None:
                             #       + ', season: ' + str(m.group(2))
                             #       + ', episode: ' + str(m.group(3)))
 
-                            season_number = str(m.group(2))
+                            season_number = str(int(m.group(2)))
                             target_dir = os.path.join(str(output_dir), final_filename)
                             target_dir = os.path.join(str(target_dir), 'season ' + season_number)
 
