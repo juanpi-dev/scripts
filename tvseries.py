@@ -41,7 +41,8 @@ if args.input is not None and args.output is not None:
                     #     print('Checking file extension ' + extension)
                     if extension.lower() in extensions:
                         filename = os.path.basename(str(path))
-                        m = re.search('(.+)(?:s([0-9]{2,})e([0-9]{2,})|([0-9]+)([0-9]{2,})|([0-9]+)x([0-9]{2,})).*', filename)
+                        # m = re.search('(.+)(?:s([0-9]{2,})e([0-9]{2,})|([0-9]+)([0-9]{2,})|([0-9]+)x([0-9]{2,})).*/i', filename)
+                        m = re.search('(.+)(?:s([0-9]{2,})e([0-9]{2,})).*/i', filename)
 
                         if m is not None:
                             if args.verbose:
