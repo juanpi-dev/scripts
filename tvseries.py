@@ -42,7 +42,8 @@ if args.input is not None and args.output is not None:
                     if extension.lower() in extensions:
                         filename = os.path.basename(str(path))
                         # m = re.search('(.+)(?:s([0-9]{2,})e([0-9]{2,})|([0-9]+)([0-9]{2,})|([0-9]+)x([0-9]{2,})).*/i', filename)
-                        m = re.search('(.+)(?:s([0-9]{2,})e([0-9]{2,})).*/i', filename)
+                        # m = re.search('(.+).*s([0-9]+)e([0-9])+.*', filename)
+                        m = re.search('(.+)[sS]([0-9]{2,})[eE]([0-9]{2,}).*', filename)
 
                         if m is not None:
                             if args.verbose:
@@ -61,12 +62,12 @@ if args.input is not None and args.output is not None:
                             if m.group(2) is not None:
                                 season_number = m.group(2)
                                 episode_number = str(int(m.group(3)))
-                            if m.group(4) is not None:
-                                season_number = m.group(4)
-                                episode_number = str(int(m.group(5)))
-                            if m.group(6) is not None:
-                                season_number = m.group(6)
-                                episode_number = str(int(m.group(7)))
+                            # if m.group(4) is not None:
+                            #     season_number = m.group(4)
+                            #     episode_number = str(int(m.group(5)))
+                            # if m.group(6) is not None:
+                            #     season_number = m.group(6)
+                            #     episode_number = str(int(m.group(7)))
 
                             season_number = str(int(season_number))
                             episode_number = str(int(episode_number))
