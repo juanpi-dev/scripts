@@ -16,7 +16,7 @@ parser.add_argument('-o', '--output')
 parser.add_argument('-s', '--simulate', action='store_true')
 args = parser.parse_args()
 
-extensions = ('mkv', 'avi', 'mp4')
+extensions = ('mkv', 'avi', 'mp4', 'srt', 'ass')
 
 if args.input is not None and args.output is not None:
     if args.input.__len__() and args.output.__len__():
